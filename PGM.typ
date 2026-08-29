@@ -3038,7 +3038,7 @@ An *autoencoder* is a generative model that learns to encode data into a lower-d
 
 So the encoder learns to compress the input data into a latent representation, while the decoder learns to reconstruct the original data from this latent representation. The goal is to minimize the reconstruction loss, which is typically measured as the mean squared error between the original input and the reconstructed output.
 
-This structure is quite handy, as it can be used for both *generating* using the decoder, and *inferring* using the encoder, after they have been trained. 
+This structure is quite handy, as it can be used for both *generating* using the decoder, and *inferring* using the encoder, after they have been trained, though in practice, using the decoder for generation is not feasible, as the latent space is not structured in a way that allows for easy sampling. 
 
 The encoder can be used like a standard supervised learning model, where we input data and get a latent representation. The decoder can be used to generate new data by sampling from the latent space and passing it through the decoder to get a new data point in the original data space.
 
@@ -3052,19 +3052,13 @@ A *variational autoencoder* is a specific type of autoencoder that introduces a 
     edge-stroke: .07em,
     spacing: 2em,
     
-    node((0,0), $hat(x)$, name: "xhat", width: 6em, fill: blue.lighten(60%)),
-    node((0, 1), [Sample $x|z$ from $x|z ~ cal(N)(mu_(x|z), Sigma_(x|z))$], name: "samplexz", stroke: 0pt),
-    node((-0.5, 2), $mu_(x|z)$, name: "muxz", width: 4em, fill: blue.lighten(60%)),
-    node((0.5, 2), $Sigma_(x|z)$, name: "sigmaxz", width: 4em, fill: blue.lighten(60%)),
+    node((0,1.5), $hat(x)$, name: "xhat", width: 6em, fill: blue.lighten(60%)),
     node((0, 3), $z$, name: "z", width: 6em, fill: green.lighten(60%)),
     
-    edge(label("z"), label("muxz"), "-|>"),
-    edge(label("z"), label("sigmaxz"), "-|>"),
-    edge(label("muxz"), label("samplexz"), "-|>"),
-    edge(label("sigmaxz"), label("samplexz"), "-|>"),
-    edge(label("samplexz"), label("xhat"), "-|>"),
     
-    node((-0.7, 2.6), [Decoder network\ $p_theta (x|z)$], stroke: 0pt),
+    edge(label("z"), label("xhat"), "-|>"),
+    
+    node((-0.3, 2.3), [Decoder network\ $p_theta (x|z)$], stroke: 0pt),
     
 
     node((0, 4), [Sample $z$ from $z|x ~ cal(N)(mu_(z|x), Sigma_(z|x))$], name: "samplez", stroke: 0pt),
@@ -3115,7 +3109,7 @@ So for training we essentially follow:
   $
 ]
 
-Generation with a VAE is straightforward: We can sample from the prior distribution $p_theta (z)$ to get a latent representation, and then pass this through the decoder to generate a new data point in the original data space.
+Generation with a VAE is straightforward and feasible (unlike standard autoencoders): We can sample from the prior distribution $p_theta (z)$ to get a latent representation, and then pass this through the decoder to generate a new data point in the original data space.
 
 === Generative Adversarial Networks (GANs) <generativeadversarialnetworks>
 GANs, in contrast to the previous models, are *implicit density models*. They simply learn to generate samples from the data distribution without explicitly modeling it.
